@@ -1,5 +1,5 @@
-CC		:= gcc
-LDFLAGS := -lglfw -lGL -lX11 -lpthread -lXrandr -lXi -ldl 
+CC		:= g++
+LDFLAGS := -lglfw -lGL -lX11 -lpthread -lXrandr -lXi -ldl
 CFLAGS	:= -Iinclude
 
 TARGETS	:= bin/main.o
@@ -12,8 +12,8 @@ default:	$(TARGETS)
 bin/glad.o:		include/glad/glad.c
 	$(CC) $(CFLAGS) include/glad/glad.c -c -o bin/glad.o
 
-bin/main.o:		main.c bin/glad.o
-	$(CC) $(CFLAGS) main.c bin/glad.o -c -o bin/main.o
+bin/main.o:		main.cpp bin/glad.o
+	$(CC) $(CFLAGS) main.cpp bin/glad.o -c -o bin/main.o
 
 .PHONY:	clean
 clean:

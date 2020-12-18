@@ -11,15 +11,21 @@
 
 //vertices for our lil coote triangle👉👈
 float vertices[] = {
-    // first triangle
      0.5f,  0.5f, 0.0f,  // top right
      0.5f, -0.5f, 0.0f,  // bottom right
-    -0.5f,  0.5f, 0.0f,  // top left 
-    // second triangle
-     0.5f, -0.5f, 0.0f,  // bottom right
     -0.5f, -0.5f, 0.0f,  // bottom left
-    -0.5f,  0.5f, 0.0f,   // top left};
+    -0.5f,  0.5f, 0.0f,  // top left 
+	 0.7f,  0.8f, 0.0f,
+	 0.8f,  0.8f, 0.0f,
+	 0.8f,  0.7f, 0.0f,
 };
+
+unsigned int indices[] = {
+	0,1,3,	//first  tri
+	1,2,3,	//second tri
+	4,5,6,  //third tri
+};
+
 //callbacks
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
@@ -75,6 +81,10 @@ int main() {
 	glGenBuffers(1, &VBO);
 	glGenVertexArrays(1, &VAO);
 
+	//generate element buffer object
+	unsigned int EBO;
+	glGenBuffers(1, &EBO);
+
 	//bind VAO to vertex arrays.
 	glBindVertexArray(VAO);
 
@@ -83,6 +93,12 @@ int main() {
 
 	//transfer verts array into VBO buffer
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	//bind EBO to GL_ELEMENT_ARRAY_BUFFER
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+
+	//transfer indices to element buffer
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
 	//set vertex attributes
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
@@ -106,7 +122,8 @@ int main() {
 		//draw triangle
 		glUseProgram(shaderProgram);
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
 		
 		//swap buffers to present to screen
 		glfwSwapBuffers(window);
