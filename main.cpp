@@ -1,7 +1,9 @@
 //SPDX-License-Identifier: BSD-3-Clause
 //SPDX-FileCopyrightText: 2020 Lorenzo Cauli (lorecast162)
 
-#include <stdio.h>
+#include <iostream>
+#include <fstream>
+#include <sstream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -146,25 +148,33 @@ void inputHandler(GLFWwindow* window) {
 
 //wrapper function to handle compilation of vertex shader.
 //done this way to "keep main code clean".
-unsigned int compileVertexShader() {
-	const char *source = "#version 330 core\n"
-		"layout (location = 0) in vec3 aPos;\n"
-		"void main(){\n"
-		"	gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0f);\n"
-		"}";
+unsigned int compileVertexShader(const std::string path) {
+	unsigned int vertexShader = -1;
 
-	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	std::ifstream sourceFile(path);
 
-	glShaderSource(vertexShader, 1, &source, NULL);
-	glCompileShader(vertexShader);
+	if (sourceFile.is_open()) {
+		std::stringstream sourceStringStream;
+		sourceStringStream << sourceFile.rdbuf();
+		
+		std::string sourceString = sourceStringStream.str();
 
-	int success;
-	char infoLog[512];
-	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+		const char* source = sourceString.c_str();
 
-	if (!success) {
-		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-		fprintf(stderr, "ERROR::SHADER::VERTEX::COMPILATION_FAILED:\n%s\n", infoLog);
+		unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+
+		glShaderSource(vertexShader, 1, &source, NULL);
+		glCompileShader(vertexShader);
+
+		int success;
+		char infoLog[512];
+		glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+
+		if (!success) {
+			glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+			fprintf(stderr, "ERROR::SHADER::VERTEX::COMPILATION_FAILED:\n%s\n", infoLog);
+		}
+
 	}
 
 	return vertexShader;
@@ -172,25 +182,32 @@ unsigned int compileVertexShader() {
 
 //wrapper function to handle compilation of fragment shader.
 //done this way to "keep main code clean".
-unsigned int compileFragmentShader() {
-	const char *source = "#version 330 core\n"
-		"out vec4 FragColor;\n"
-		"void main(){\n"
-		"	FragColor = vec4(1.0f*(gl_FragCoord.x / 800), 1.0f*(gl_FragCoord.y / 600), 1.0f*gl_FragCoord.z, 0.0f);\n"
-		"}";
+unsigned int compileFragmentShader(const std::string path) {
+	unsigned int fragmentShader = -1;
 
-	unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	std::ifstream sourceFile(path);
 
-	glShaderSource(fragmentShader, 1, &source, NULL);
-	glCompileShader(fragmentShader);
+	if (sourceFile.is_open()) {
+		std::stringstream sourceStringStream;
+		sourceStringStream << sourceFile.rdbuf();
 
-	int success;
-	char infoLog[512];
-	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+		std::string sourceString = sourceStringStream.str();
 
-	if (!success) {
-		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-		fprintf(stderr, "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED:\n%s\n", infoLog);
+		const char* source = sourceString.c_str();
+
+		fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+
+		glShaderSource(fragmentShader, 1, &source, NULL);
+		glCompileShader(fragmentShader);
+
+		int success;
+		char infoLog[512];
+		glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+
+		if (!success) {
+			glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+			fprintf(stderr, "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED:\n%s\n", infoLog);
+		}
 	}
 
 	return fragmentShader;
@@ -198,8 +215,8 @@ unsigned int compileFragmentShader() {
 
 //wrapper function to create our shader program
 unsigned int createShaderProgram() {
-	unsigned int vertexShader = compileVertexShader();
-	unsigned int fragmentShader = compileFragmentShader();
+	unsigned int vertexShader = compileVertexShader("./res/shaders/vertex/simple.vs");
+	unsigned int fragmentShader = compileFragmentShader("./res/shaders/fragment/simple.fs");
 
 	unsigned int shaderProgram = glCreateProgram();
 	glAttachShader(shaderProgram, vertexShader);
