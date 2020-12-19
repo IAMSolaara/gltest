@@ -27,4 +27,4 @@ bin:
 
 out:
 	mkdir -p out/res/
-	ln -sf shaders out/res/shaders
+	cp -rf shaders out/res/shaders
