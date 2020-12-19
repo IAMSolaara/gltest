@@ -28,6 +28,11 @@ unsigned int indices[] = {
 	4,5,6,  //third tri
 };
 
+float r = 0.0f;
+float g = 0.0f;
+float b = 0.0f;
+float w = 1.0f;
+
 //callbacks
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
@@ -36,6 +41,11 @@ void inputHandler(GLFWwindow* window);
 unsigned int compileVertexShader();
 unsigned int compileFragmentShader();
 unsigned int createShaderProgram();
+
+float clamp(float d, float min, float max) {
+    const float t = d < min ? min : d;
+    return t > max ? max : t;
+}
 
 int main() {
 	//initialize glfw
@@ -123,6 +133,11 @@ int main() {
 
 		//draw triangle
 		glUseProgram(shaderProgram);
+
+		//get `coolColor` uniform location to inject r,g,b,w vars into
+		int offsetLocation = glGetUniformLocation(shaderProgram, "coolColor");
+		glUniform4f(offsetLocation, r, g, b, w);
+
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
@@ -143,6 +158,36 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 void inputHandler(GLFWwindow* window) {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, 1);
+	}
+
+	//	raise red
+	if (glfwGetKey(window, GLFW_KEY_KP_7) == GLFW_PRESS) {
+		r = clamp(r+0.01f, 0.0f, 1.0f);
+	}
+
+	//	lower red
+	if (glfwGetKey(window, GLFW_KEY_KP_4) == GLFW_PRESS) {
+		r = clamp(r-0.01f, 0.0f, 1.0f);
+	}
+
+	//	raise blue
+	if (glfwGetKey(window, GLFW_KEY_KP_8) == GLFW_PRESS) {
+		b = clamp(b+0.01f, 0.0f, 1.0f);
+	}
+
+	//	lower blue
+	if (glfwGetKey(window, GLFW_KEY_KP_5) == GLFW_PRESS) {
+		b = clamp(b-0.01f, 0.0f, 1.0f);
+	}
+
+	//	raise green
+	if (glfwGetKey(window, GLFW_KEY_KP_9) == GLFW_PRESS) {
+		g = clamp(g+0.01f, 0.0f, 1.0f);
+	}
+
+	//	lower green
+	if (glfwGetKey(window, GLFW_KEY_KP_6) == GLFW_PRESS) {
+		g = clamp(g-0.01f, 0.0f, 1.0f);
 	}
 }
 
