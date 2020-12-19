@@ -20,11 +20,13 @@ clean:
 	rm -rf bin out
 
 .PHONY:	make_directories
-make_directories:	bin out
+make_directories:	bin out out/res/shaders
 
 bin:
 	mkdir -p bin/
 
 out:
 	mkdir -p out/res/
+
+out/res/shaders:
 	cp -rf shaders out/res/shaders
