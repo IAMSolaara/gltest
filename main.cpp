@@ -13,19 +13,21 @@
 
 //vertices for our lil coote triangle👉👈
 float vertices[] = {
-     0.5f,  0.5f, 0.0f,  // top right
-     0.5f, -0.5f, 0.0f,  // bottom right
-    -0.5f, -0.5f, 0.0f,  // bottom left
-    -0.5f,  0.5f, 0.0f,  // top left 
-	 0.7f,  0.8f, 0.0f,
-	 0.8f,  0.8f, 0.0f,
-	 0.8f,  0.7f, 0.0f,
+	//big rect
+     0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f,  // top right
+     0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom right
+    -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom left
+    -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, // top left 
+	//small tri
+//	 0.7f,  0.8f, 0.0f, 1.0f, 0.0f, 0.0f,
+//	 0.8f,  0.8f, 0.0f, 0.0f, 1.0f, 0.0f,
+//	 0.8f,  0.7f, 0.0f, 0.0f, 0.0f, 1.0f,
 };
 
 unsigned int indices[] = {
 	0,1,3,	//first  tri
 	1,2,3,	//second tri
-	4,5,6,  //third tri
+//	4,5,6,  //third tri
 };
 
 float r = 0.0f;
@@ -112,11 +114,15 @@ int main() {
 	//transfer indices to element buffer
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-	//set vertex attributes
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
+	//set vertex coords position attributes
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6*sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	//create shader program to render poly
+	//set vertex color position attributes
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+        //create shader program to render poly
 	unsigned int shaderProgram = createShaderProgram();
 
 	//main render loop
@@ -135,8 +141,8 @@ int main() {
 		glUseProgram(shaderProgram);
 
 		//get `coolColor` uniform location to inject r,g,b,w vars into
-		int offsetLocation = glGetUniformLocation(shaderProgram, "coolColor");
-		glUniform4f(offsetLocation, r, g, b, w);
+		//int offsetLocation = glGetUniformLocation(shaderProgram, "coolColor");
+		//glUniform4f(offsetLocation, r, g, b, w);
 
 		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
