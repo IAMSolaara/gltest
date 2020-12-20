@@ -7,6 +7,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stb_image/stb_image.h>
+#include <shader.h>
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
@@ -41,9 +42,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 //custom funcs
 void inputHandler(GLFWwindow* window);
-unsigned int compileVertexShader();
-unsigned int compileFragmentShader();
-unsigned int createShaderProgram();
 
 float clamp(float d, float min, float max) {
     const float t = d < min ? min : d;
@@ -124,7 +122,8 @@ int main() {
 	glEnableVertexAttribArray(1);
 
         //create shader program to render poly
-	unsigned int shaderProgram = createShaderProgram();
+	//unsigned int shaderProgram = createShaderProgram();
+	Shader myShader("../shaders/vertex/simple.vs", "../shaders/fragment/simple.fs");
 
 	//main render loop
 	while (!glfwWindowShouldClose(window)) {
@@ -139,7 +138,8 @@ int main() {
 		inputHandler(window);
 
 		//draw triangle
-		glUseProgram(shaderProgram);
+		//glUseProgram(shaderProgram);
+		myShader.use();
 
 		//get `coolColor` uniform location to inject r,g,b,w vars into
 		//int offsetLocation = glGetUniformLocation(shaderProgram, "coolColor");
@@ -196,93 +196,4 @@ void inputHandler(GLFWwindow* window) {
 	if (glfwGetKey(window, GLFW_KEY_KP_6) == GLFW_PRESS) {
 		g = clamp(g-0.01f, 0.0f, 1.0f);
 	}
-}
-
-//wrapper function to handle compilation of vertex shader.
-//done this way to "keep main code clean".
-unsigned int compileVertexShader(const std::string path) {
-	unsigned int vertexShader = -1;
-
-	std::ifstream sourceFile(path);
-
-	if (sourceFile.is_open()) {
-		std::stringstream sourceStringStream;
-		sourceStringStream << sourceFile.rdbuf();
-		
-		std::string sourceString = sourceStringStream.str();
-
-		const char* source = sourceString.c_str();
-
-		unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-
-		glShaderSource(vertexShader, 1, &source, NULL);
-		glCompileShader(vertexShader);
-
-		int success;
-		char infoLog[512];
-		glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-
-		if (!success) {
-			glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-			fprintf(stderr, "ERROR::SHADER::VERTEX::COMPILATION_FAILED:\n%s\n", infoLog);
-		}
-
-	}
-
-	return vertexShader;
-}
-
-//wrapper function to handle compilation of fragment shader.
-//done this way to "keep main code clean".
-unsigned int compileFragmentShader(const std::string path) {
-	unsigned int fragmentShader = -1;
-
-	std::ifstream sourceFile(path);
-
-	if (sourceFile.is_open()) {
-		std::stringstream sourceStringStream;
-		sourceStringStream << sourceFile.rdbuf();
-
-		std::string sourceString = sourceStringStream.str();
-
-		const char* source = sourceString.c_str();
-
-		fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-
-		glShaderSource(fragmentShader, 1, &source, NULL);
-		glCompileShader(fragmentShader);
-
-		int success;
-		char infoLog[512];
-		glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-
-		if (!success) {
-			glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-			fprintf(stderr, "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED:\n%s\n", infoLog);
-		}
-	}
-
-	return fragmentShader;
-}
-
-//wrapper function to create our shader program
-unsigned int createShaderProgram() {
-	unsigned int vertexShader = compileVertexShader("./res/shaders/vertex/simple.vs");
-	unsigned int fragmentShader = compileFragmentShader("./res/shaders/fragment/simple.fs");
-
-	unsigned int shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-
-	int success; char infoLog[512];
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-	if (!success) {
-		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-		fprintf(stderr, "GL Program Link Error:\n%s\n", infoLog);
-	}
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-
-	return shaderProgram;
 }
