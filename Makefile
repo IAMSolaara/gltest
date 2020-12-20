@@ -12,8 +12,11 @@ default:	$(TARGETS)
 bin/glad.o:		include/glad/glad.c
 	$(CC) $(CFLAGS) include/glad/glad.c -c -o bin/glad.o
 
-bin/main.o:		main.cpp bin/glad.o
-	$(CC) $(CFLAGS) main.cpp bin/glad.o -c -o bin/main.o
+bin/stb_image.o:		include/stb_image/stb_image.c
+	$(CC) $(CFLAGS) include/stb_image/stb_image.c -c -o bin/stb_image.o
+
+bin/main.o:		main.cpp bin/glad.o bin/stb_image.o
+	$(CC) $(CFLAGS) main.cpp bin/glad.o bin/stb_image.o -c -o bin/main.o
 
 .PHONY:	clean
 clean:

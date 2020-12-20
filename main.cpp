@@ -6,6 +6,7 @@
 #include <sstream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <stb_image/stb_image.h>
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
