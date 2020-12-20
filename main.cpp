@@ -17,7 +17,7 @@
 float vertices[] = {
 	//big rect
      0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f,  // top right
-     0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // bottom right
+     0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, // bottom right
     -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, // bottom left
     -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, // top left 
 	//small tri
@@ -29,7 +29,7 @@ float vertices[] = {
 unsigned int indices[] = {
 	0,1,3,	//first  tri
 	1,2,3,	//second tri
-//	4,5,6,  //third tri
+	//4,5,6,  //third tri
 };
 
 float r = 0.0f;
@@ -146,12 +146,16 @@ int main() {
 		//glUniform4f(offsetLocation, r, g, b, w);
 
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 		
 		//swap buffers to present to screen
 		glfwSwapBuffers(window);
 	}
+
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
 
 	//kill glfw
 	glfwTerminate();
