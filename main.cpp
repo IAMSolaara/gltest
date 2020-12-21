@@ -1,11 +1,17 @@
 //SPDX-License-Identifier: BSD-3-Clause
 //SPDX-FileCopyrightText: 2020 Lorenzo Cauli (lorecast162)
 
+//global includes
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
+//local includes
 #include <stb_image/stb_image.h>
 #include <shader.h>
 
