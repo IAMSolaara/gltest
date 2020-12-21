@@ -46,6 +46,11 @@ float g = 0.0f;
 float b = 0.0f;
 float w = 1.0f;
 
+float angle = 0.0f;
+float scale = 0.4f;
+float scaleInc = 0.004f;
+float rotInc = 2.0f;
+
 //callbacks
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
@@ -177,6 +182,11 @@ int main() {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture);
 
+		glm::mat4 trans = glm::mat4(1.0f);
+		trans = glm::rotate(trans, glm::radians(angle), glm::vec3(0.0, 0.0, 1.0));
+		trans = glm::scale(trans, glm::vec3(scale, scale, scale));
+		myShader.setMat4("transform", trans);
+
 		//draw triangle
 		myShader.use();
 
@@ -190,6 +200,10 @@ int main() {
 		
 		//swap buffers to present to screen
 		glfwSwapBuffers(window);
+
+		angle += rotInc;
+		scale += scaleInc;
+		if (scale >= 2.0f || scale <= 0.4f) scaleInc *= -1.0f;
 	}
 
 	glDeleteVertexArrays(1, &VAO);
@@ -238,5 +252,9 @@ void inputHandler(GLFWwindow* window) {
 	//	lower green
 	if (glfwGetKey(window, GLFW_KEY_KP_6) == GLFW_PRESS) {
 		g = clamp(g-0.01f, 0.0f, 1.0f);
+	}
+	
+	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+		rotInc *= -1.0f;
 	}
 }
