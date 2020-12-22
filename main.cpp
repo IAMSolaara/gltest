@@ -188,7 +188,15 @@ int main() {
 		glm::mat4 trans = glm::mat4(1.0f);
 		trans = glm::rotate(trans, glm::radians(angle), glm::vec3(0.0, 0.0, 1.0));
 		trans = glm::scale(trans, glm::vec3(scale, scale, scale));
+
+		glm::mat4 model = glm::rotate(glm::mat4(1.0f), glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
+		glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
+
 		myShader.setMat4("transform", trans);
+		myShader.setMat4("model", model);
+		myShader.setMat4("view", view);
+		myShader.setMat4("projection", projection);
 
 		//draw triangle
 		myShader.use();
