@@ -19,16 +19,42 @@
 #define SCREEN_HEIGHT 600
 #define WINDOW_TITLE "LearnOpenGL"
 
-#define RESPATH "../res"
+#define RESPATH "./res"
 
 //vertices for our lil coote triangle👉👈
 float vertices[] = {
 	//big rect
-	//x     y     z     r     g     b     s     t
-     0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // top right
-     0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // bottom right
-    -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom left
-    -0.5f,  0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, // top left 
+	//x     y     z      r     g     b     s     t
+//face3
+	 0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+     0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+    -0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+//face1
+     0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+     0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+    -0.5f, -0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+//face4
+    -0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+    -0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+//face5                                              
+     0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+     0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+     0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+     0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+//face2
+     0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+     0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+    -0.5f, -0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+    -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+//face6
+     0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+     0.5f,  0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+    -0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+    -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f
 	//small tri
 //	 0.7f,  0.8f, 0.0f, 1.0f, 0.0f, 0.0f,
 //	 0.8f,  0.8f, 0.0f, 0.0f, 1.0f, 0.0f,
@@ -37,7 +63,22 @@ float vertices[] = {
 
 unsigned int indices[] = {
 	0,1,3,	//first  tri
-	1,2,3,	//second tri
+	0,2,3,	//second tri
+
+	4,5,7,	//first  tri
+	4,6,7,	//second tri
+	
+	8,9,11,
+	8,10,11,
+	
+	12,13,15,
+	12,14,15,
+
+	16,17,19,
+	16,18,19,
+
+	20,21,23,
+	20,22,23,
 	//4,5,6,  //third tri
 };
 
@@ -49,7 +90,12 @@ float w = 1.0f;
 float angle = 0.0f;
 float scale = 0.4f;
 float scaleInc = 0.004f;
-float rotInc = 2.0f;
+float angleInc = 2.0f;
+
+//bool autoRotate = false;
+
+glm::vec3 cameraPos =    glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
 
 //callbacks
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -170,11 +216,13 @@ int main() {
 	myShader.use();
 	myShader.setInt("mytexture", 0);
 
+	glEnable(GL_DEPTH_TEST);
+	
 	//main render loop
 	while (!glfwWindowShouldClose(window)) {
 		//clear to dark aqua-ish color
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//poll events
 		glfwPollEvents();
@@ -206,15 +254,18 @@ int main() {
 		//glUniform4f(offsetLocation, r, g, b, w);
 
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 		
 		//swap buffers to present to screen
 		glfwSwapBuffers(window);
 
-		angle += rotInc;
-		scale += scaleInc;
-		if (scale >= 2.0f || scale <= 0.4f) scaleInc *= -1.0f;
+		/*
+		if (autoRotate) angle += angleInc;
+		else angleInc = 2.0f;
+		if (autoRotate) {scale += scaleInc;
+		if (scale >= 2.0f || scale <= 0.4f) scaleInc *= -1.0f;}
+		*/
 	}
 
 	glDeleteVertexArrays(1, &VAO);
@@ -235,38 +286,34 @@ void inputHandler(GLFWwindow* window) {
 		glfwSetWindowShouldClose(window, 1);
 	}
 
-	//	raise red
-	if (glfwGetKey(window, GLFW_KEY_KP_7) == GLFW_PRESS) {
-		r = clamp(r+0.01f, 0.0f, 1.0f);
-	}
-
 	//	lower red
 	if (glfwGetKey(window, GLFW_KEY_KP_4) == GLFW_PRESS) {
-		r = clamp(r-0.01f, 0.0f, 1.0f);
+		angle -= angleInc;
 	}
 
-	//	raise blue
-	if (glfwGetKey(window, GLFW_KEY_KP_8) == GLFW_PRESS) {
-		b = clamp(b+0.01f, 0.0f, 1.0f);
-	}
-
-	//	lower blue
+	//	lower green
 	if (glfwGetKey(window, GLFW_KEY_KP_5) == GLFW_PRESS) {
-		b = clamp(b-0.01f, 0.0f, 1.0f);
-	}
-
-	//	raise green
-	if (glfwGetKey(window, GLFW_KEY_KP_9) == GLFW_PRESS) {
-		g = clamp(g+0.01f, 0.0f, 1.0f);
+		//autoRotate = !autoRotate;
 	}
 
 	//	lower green
 	if (glfwGetKey(window, GLFW_KEY_KP_6) == GLFW_PRESS) {
-		g = clamp(g-0.01f, 0.0f, 1.0f);
+		angle += angleInc;
+	}
+
+	//	lower green
+	if (glfwGetKey(window, GLFW_KEY_KP_ADD) == GLFW_PRESS) {
+		scale = clamp(scale+0.006f, 0.4f, 2.0f);
+	}
+
+	//	lower green
+	if (glfwGetKey(window, GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS) {
+		scale = clamp(scale-0.006f, 0.4f, 2.0f);
 	}
 	
+	
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
-		rotInc *= -1.0f;
+		//angleInc *= -1.0f;
 	}
 }
 
