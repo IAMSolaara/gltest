@@ -56,6 +56,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 //custom funcs
 void inputHandler(GLFWwindow* window);
+void errorHandler(int ec, const char* msg);
 
 float clamp(float d, float min, float max) {
     const float t = d < min ? min : d;
@@ -65,6 +66,8 @@ float clamp(float d, float min, float max) {
 int main() {
 	//initialize glfw
 	glfwInit();
+
+	glfwSetErrorCallback(errorHandler);
 
 	//set OGL version hints so glfw will work only on supported versions
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -257,4 +260,8 @@ void inputHandler(GLFWwindow* window) {
 	if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) {
 		rotInc *= -1.0f;
 	}
+}
+
+void errorHandler(int ec, const char* msg) {
+	printf("GLFW ERROR (Code %d): %s\n", ec, msg);
 }
