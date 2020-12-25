@@ -95,6 +95,18 @@ unsigned int tex2Indexes[] = {
 	0, 2, 3,
 };
 
+float tex3Vertices[] = {
+	 0.5f,  -0.5f,  -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+     0.5f,  -1.0f,  -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 0.5f,
+    -0.5f,  -0.5f,  -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+    -0.5f,  -1.0f,  -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 0.5f,
+};
+
+unsigned int tex3Indexes[] = {
+	0, 1, 3,
+	0, 2, 3,
+};
+
 float r = 0.0f;
 float g = 0.0f;
 float b = 0.0f;
@@ -250,6 +262,44 @@ int main() {
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 
+	//generate vertex buffer object and vertex array object
+	unsigned int VBO3;
+	unsigned int VAO3;
+
+	glGenBuffers(1, &VBO3);
+	glGenVertexArrays(1, &VAO3);
+
+	//generate element buffer object
+	unsigned int EBO3;
+	glGenBuffers(1, &EBO3);
+
+	//bind VAO3 to vertex arrays.
+	glBindVertexArray(VAO3);
+
+	//bind VBO3 buffer to the GL_ARRAY_BUFFER, which we'll use as vertex buffer
+	glBindBuffer(GL_ARRAY_BUFFER, VBO3);
+
+	//transfer verts array into VBO3 buffer
+	glBufferData(GL_ARRAY_BUFFER, sizeof(tex3Vertices), tex3Vertices, GL_STATIC_DRAW);
+
+	//bind EBO3 to GL_ELEMENT_ARRAY_BUFFER
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO3);
+
+	//transfer indices to element buffer
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(tex3Indexes), tex3Indexes, GL_STATIC_DRAW);
+
+	//set vertex coords position attributes
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	//set vertex color position attributes
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+
+	//set vertex texture position attributes
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
+
     //create shader program to render poly
 	Shader myShader(RESPATH"/shaders/vertex/simple.vs", RESPATH"/shaders/fragment/simple.fs");
 	//Shader myShader2(RESPATH"/shaders/vertex/simple.vs", RESPATH"/shaders/fragment/simple.fs");
@@ -291,9 +341,34 @@ int main() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
-	textureData = stbi_load(RESPATH"/textures/wall.jpg", &w, &h, &nChannels, 0);
+	textureData = stbi_load(RESPATH"/textures/risi.jpg", &w, &h, &nChannels, 0);
 	if (textureData) {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		int wQ, hQ;
+		int miplevel = 0;
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, miplevel, GL_TEXTURE_WIDTH, &w);
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, miplevel, GL_TEXTURE_HEIGHT, &h);
+		printf("SBI Size:\t%d\t%d\n",w,h);
+		printf("Queried Size\t%d\t%d\n",wQ,hQ);
+	}
+	else {
+		fprintf(stderr, "Texture load error.\n");
+	}
+	stbi_image_free(textureData);
+
+	unsigned int texture3;
+	glGenTextures(1, &texture3);
+	glBindTexture(GL_TEXTURE_2D, texture3);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	textureData = stbi_load(RESPATH"/textures/caca.png", &w, &h, &nChannels, 0);
+	if (textureData) {
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, textureData);
 		glGenerateMipmap(GL_TEXTURE_2D);
 		int wQ, hQ;
 		int miplevel = 0;
@@ -331,8 +406,13 @@ int main() {
 		glBindTexture(GL_TEXTURE_2D, texture);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, texture2);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, texture3);
 
-		glm::mat4 trans = glm::mat4(1.0f);
+		glm::mat4 trans;
+
+//cube
+		trans = glm::mat4(1.0f);
 		trans = glm::rotate(trans, glm::radians(angle), glm::vec3(1.0, 0.0, 0.0));
 		trans = glm::rotate(trans, glm::radians(angle * 0.3f), glm::vec3(0.0, 1.0, 0.0));
 		trans = glm::rotate(trans, glm::radians(angle + 2.0f), glm::vec3(0.0, 0.0, 1.0));
@@ -362,14 +442,28 @@ int main() {
 		glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 
+//bottom thing
 		myShader.setMat4("transform", glm::mat4(1.0f));
-
 
 		myShader.setInt("mytexture", 1);
 
 		myShader.use();
 
 		glBindVertexArray(VAO2);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glBindVertexArray(0);
+
+//top sign thing		
+		trans = glm::mat4(1.0f);
+		trans = glm::rotate(trans, glm::radians(90.0f), glm::vec3(1.0, 0.0, 0.0));
+		trans = glm::rotate(trans, (float)sin(glfwGetTime()), glm::vec3(0.0, 0.0, 1.0));
+		myShader.setMat4("transform", trans);
+
+		myShader.setInt("mytexture", 2);
+
+		myShader.use();
+
+		glBindVertexArray(VAO3);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 		
@@ -386,6 +480,10 @@ int main() {
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
+
+	glDeleteVertexArrays(1, &VAO2);
+	glDeleteBuffers(1, &VBO2);
+	glDeleteBuffers(1, &EBO2);
 
 	glDeleteVertexArrays(1, &VAO2);
 	glDeleteBuffers(1, &VBO2);
