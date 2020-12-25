@@ -270,6 +270,12 @@ int main() {
 	if (textureData) {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData);
 		glGenerateMipmap(GL_TEXTURE_2D);
+		int wQ, hQ;
+		int miplevel = 0;
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, miplevel, GL_TEXTURE_WIDTH, &w);
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, miplevel, GL_TEXTURE_HEIGHT, &h);
+		printf("SBI Size:\t%d\t%d\n",w,h);
+		printf("Queried Size\t%d\t%d\n",wQ,hQ);
 	}
 	else {
 		fprintf(stderr, "Texture load error.\n");
@@ -287,8 +293,14 @@ int main() {
 
 	textureData = stbi_load(RESPATH"/textures/wall.jpg", &w, &h, &nChannels, 0);
 	if (textureData) {
-		glTexImage2D(GL_TEXTURE_2D, 1, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, textureData);
 		glGenerateMipmap(GL_TEXTURE_2D);
+		int wQ, hQ;
+		int miplevel = 0;
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, miplevel, GL_TEXTURE_WIDTH, &w);
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, miplevel, GL_TEXTURE_HEIGHT, &h);
+		printf("SBI Size:\t%d\t%d\n",w,h);
+		printf("Queried Size\t%d\t%d\n",wQ,hQ);
 	}
 	else {
 		fprintf(stderr, "Texture load error.\n");
@@ -321,7 +333,7 @@ int main() {
 		glBindTexture(GL_TEXTURE_2D, texture2);
 
 		glm::mat4 trans = glm::mat4(1.0f);
-		trans = glm::rotate(trans, glm::radians(angle), glm::vec3(0.2, 0.0, 0.0));
+		trans = glm::rotate(trans, glm::radians(angle), glm::vec3(1.0, 0.0, 0.0));
 		trans = glm::rotate(trans, glm::radians(angle * 0.3f), glm::vec3(0.0, 1.0, 0.0));
 		trans = glm::rotate(trans, glm::radians(angle + 2.0f), glm::vec3(0.0, 0.0, 1.0));
 		trans = glm::scale(trans, glm::vec3(scale, scale, scale));
@@ -374,6 +386,10 @@ int main() {
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
+
+	glDeleteVertexArrays(1, &VAO2);
+	glDeleteBuffers(1, &VBO2);
+	glDeleteBuffers(1, &EBO2);
 
 	//kill glfw
 	glfwTerminate();
